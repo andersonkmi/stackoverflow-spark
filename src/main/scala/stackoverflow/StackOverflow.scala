@@ -2,7 +2,6 @@ package stackoverflow
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
 import org.apache.spark.rdd.RDD
 import annotation.tailrec
 import scala.reflect.ClassTag
@@ -78,7 +77,11 @@ class StackOverflow extends Serializable {
 
   /** Group the questions and answers together */
   def groupedPostings(postings: RDD[Posting]): RDD[(QID, Iterable[(Question, Answer)])] = {
-    ???
+    val questionsRDD = postings.filter(item => item.postingType == 1).map(item => (item.id, item))
+    val answersRDD = postings.filter(item => item.postingType == 2).map(item => (item.parentId.get, item))
+    val joinedRDD = questionsRDD.join(answersRDD)
+    joinedRDD.take(10).foreach(item => println(item._1))
+    null
   }
 
 
