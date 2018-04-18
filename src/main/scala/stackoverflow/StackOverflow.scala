@@ -125,9 +125,13 @@ class StackOverflow extends Serializable {
       }
     }
 
-    val output = scored.map(score => (firstLangInTag(score._1.tags, langs).getOrElse(0) * langSpread, score._2))
-    output.cache()
-    output
+    (for(score <- scored
+         if firstLangInTag(score._1.tags, langs).isDefined)
+      yield (langSpread * firstLangInTag(score._1.tags, langs).get, score._2)).persist()
+
+    //val output = scored.map(score => (firstLangInTag(score._1.tags, langs).getOrElse(0) * langSpread, score._2))
+    //output.cache()
+    //output
   }
 
 
