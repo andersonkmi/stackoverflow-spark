@@ -80,8 +80,8 @@ class StackOverflow extends Serializable {
     val questionsRDD = postings.filter(item => item.postingType == 1).map(item => (item.id, item))
     val answersRDD = postings.filter(item => item.postingType == 2).map(item => (item.parentId.get, item))
     val joinedRDD = questionsRDD.join(answersRDD)
-    joinedRDD.take(10).foreach(item => println(item._1))
-    null
+    //joinedRDD.take(10).foreach(item => println(item._1))
+    joinedRDD.groupByKey()
   }
 
 
@@ -100,7 +100,9 @@ class StackOverflow extends Serializable {
       highScore
     }
 
-    ???
+    grouped.map(item => {
+      (item._2.head._1, answerHighScore(item._2.map(_._2).toArray))
+    })
   }
 
 
