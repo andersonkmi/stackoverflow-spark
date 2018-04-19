@@ -186,6 +186,13 @@ class StackOverflow extends Serializable {
     val newMeans = means.clone() // you need to compute newMeans
 
     // TODO: Fill in the newMeans array
+    val clusters = vectors.map(v => (findClosest(v, means), v)).groupByKey()
+    val updatedClusters = clusters.map(x => (x._1, averageVectors(x._2))).collect()
+
+    for(k <- updatedClusters){
+      newMeans.update(k._1, k._2)
+    }
+
     val distance = euclideanDistance(means, newMeans)
 
     if (debug) {
